@@ -1,0 +1,8 @@
+---
+- name: ensure vim is installed
+  dnf: name="{{ item }}"
+  sudo: yes
+  with_items:
+    - git
+    - ctags-etags
+    - vim-enhanced

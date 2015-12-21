@@ -1,0 +1,5 @@
+---
+vim_plugins:
+  - "tpope/vim-surround"
+vim_users:
+  - vagrant

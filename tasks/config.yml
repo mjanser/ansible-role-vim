@@ -1,0 +1,56 @@
+---
+- name: "retrieve the list of home directories"
+  command: ls /home
+  register: home_dirs
+  changed_when: false
+
+- name: ensure vim plugin directory exists
+  file: path="/home/{{ item }}/.vim/bundle"
+        state=directory
+        recurse=yes
+  sudo: yes
+  sudo_user: "{{ item }}"
+  when: "item in home_dirs.stdout_lines"
+  with_items: vim_users
+
+- name: ensure vim custom config directory exists
+  file: path="/home/{{ item }}/.vim/config"
+        state=directory
+        recurse=yes
+  sudo: yes
+  sudo_user: "{{ item }}"
+  when: "item in home_dirs.stdout_lines"
+  with_items: vim_users
+
+- name: ensure vim plugin manager is installed
+  git: repo=https://github.com/gmarik/vundle
+       dest="/home/{{ item }}/.vim/bundle/Vundle.vim"
+       version=master
+  sudo_user: "{{ item }}"
+  when: "item in home_dirs.stdout_lines"
+  with_items: vim_users
+
+- name: ensure vim configuration is installed
+  template: src=vimrc.j2
+            dest="/home/{{ item }}/.vimrc"
+  sudo: yes
+  sudo_user: "{{ item }}"
+  when: "item in home_dirs.stdout_lines"
+  with_items: vim_users
+
+- name: ensure custom vim configuration is installed
+  copy: content=""
+        dest="/home/{{ item }}/.vim/config/custom.vim"
+        force=no
+  sudo: yes
+  sudo_user: "{{ item }}"
+  when: "item in home_dirs.stdout_lines"
+  with_items: vim_users
+
+- name: ensure vim plugins are installed
+  shell: "vim +PluginInstall! +qall"
+  changed_when: false
+  sudo: yes
+  sudo_user: "{{ item }}"
+  when: "item in home_dirs.stdout_lines"
+  with_items: vim_users

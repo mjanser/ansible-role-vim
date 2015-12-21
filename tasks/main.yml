@@ -1,0 +1,8 @@
+---
+- include: install-dnf.yml
+  when: "ansible_os_family == 'RedHat'"
+
+- include: install-apt.yml
+  when: "ansible_os_family != 'RedHat'"
+
+- include: config.yml

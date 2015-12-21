@@ -1,0 +1,16 @@
+set nocompatible
+filetype off
+
+" vundle
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" plugins
+{% for plugin in vim_plugins %}
+Plugin '{{ plugin }}'
+{% endfor %}
+
+call vundle#end()
+filetype plugin indent on
+
+source ~/.vim/config/*.vim
