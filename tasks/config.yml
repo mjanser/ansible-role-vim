@@ -38,13 +38,21 @@
   when: "item in home_dirs.stdout_lines"
   with_items: vim_users
 
-- name: ensure custom vim configuration is installed
+- name: ensure empty custom vim configuration is installed
   copy: content=""
         dest="/home/{{ item }}/.vim/config/custom.vim"
         force=no
   sudo: yes
   sudo_user: "{{ item }}"
-  when: "item in home_dirs.stdout_lines"
+  when: "vim_custom_config_file is none and item in home_dirs.stdout_lines"
+  with_items: vim_users
+
+- name: ensure defined custom vim configuration is installed
+  copy: src="{{ vim_custom_config_file }}"
+        dest="/home/{{ item }}/.vim/config/custom.vim"
+  sudo: yes
+  sudo_user: "{{ item }}"
+  when: "vim_custom_config_file is not none and item in home_dirs.stdout_lines"
   with_items: vim_users
 
 - name: ensure vim plugins are installed

@@ -10,6 +10,7 @@ None.
 
 Available variables are listed below, along with default values:
 
+    vim_custom_config_file: ~
     vim_plugins:
       - "tpope/vim-surround"
     vim_users:
