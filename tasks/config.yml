@@ -5,60 +5,70 @@
   changed_when: false
 
 - name: ensure vim plugin directory exists
-  file: path="/home/{{ item }}/.vim/bundle"
-        state=directory
-        recurse=yes
-  sudo: yes
-  sudo_user: "{{ item }}"
+  file:
+    path: "/home/{{ item }}/.vim/bundle"
+    state: directory
+    recurse: yes
+  become: yes
+  become_user: "{{ item }}"
   when: "item in home_dirs.stdout_lines"
-  with_items: vim_users
+  with_items: "{{ vim_users }}"
 
 - name: ensure vim custom config directory exists
-  file: path="/home/{{ item }}/.vim/config"
-        state=directory
-        recurse=yes
-  sudo: yes
-  sudo_user: "{{ item }}"
+  file:
+    path: "/home/{{ item }}/.vim/config"
+    state: directory
+    recurse: yes
+  become: yes
+  become_user: "{{ item }}"
   when: "item in home_dirs.stdout_lines"
-  with_items: vim_users
+  with_items: "{{ vim_users }}"
 
 - name: ensure vim plugin manager is installed
-  git: repo=https://github.com/gmarik/vundle
-       dest="/home/{{ item }}/.vim/bundle/Vundle.vim"
-       version=master
-  sudo_user: "{{ item }}"
+  git:
+    repo: https://github.com/gmarik/vundle
+    dest: "/home/{{ item }}/.vim/bundle/Vundle.vim"
+    version: master
+  become: yes
+  become_user: "{{ item }}"
   when: "item in home_dirs.stdout_lines"
-  with_items: vim_users
+  with_items: "{{ vim_users }}"
 
 - name: ensure vim configuration is installed
-  template: src=vimrc.j2
-            dest="/home/{{ item }}/.vimrc"
-  sudo: yes
-  sudo_user: "{{ item }}"
+  template:
+    src: vimrc.j2
+    dest: "/home/{{ item }}/.vimrc"
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: 0644
   when: "item in home_dirs.stdout_lines"
-  with_items: vim_users
+  with_items: "{{ vim_users }}"
 
 - name: ensure empty custom vim configuration is installed
-  copy: content=""
-        dest="/home/{{ item }}/.vim/config/custom.vim"
-        force=no
-  sudo: yes
-  sudo_user: "{{ item }}"
+  copy:
+    content: ""
+    dest: "/home/{{ item }}/.vim/config/custom.vim"
+    force: no
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: 0644
   when: "vim_custom_config_file is none and item in home_dirs.stdout_lines"
-  with_items: vim_users
+  with_items: "{{ vim_users }}"
 
 - name: ensure defined custom vim configuration is installed
-  copy: src="{{ vim_custom_config_file }}"
-        dest="/home/{{ item }}/.vim/config/custom.vim"
-  sudo: yes
-  sudo_user: "{{ item }}"
+  copy:
+    src: "{{ vim_custom_config_file }}"
+    dest: "/home/{{ item }}/.vim/config/custom.vim"
+    owner: "{{ item }}"
+    group: "{{ item }}"
+    mode: 0644
   when: "vim_custom_config_file is not none and item in home_dirs.stdout_lines"
-  with_items: vim_users
+  with_items: "{{ vim_users }}"
 
 - name: ensure vim plugins are installed
   shell: "vim +PluginInstall! +qall"
   changed_when: false
-  sudo: yes
-  sudo_user: "{{ item }}"
+  become: yes
+  become_user: "{{ item }}"
   when: "item in home_dirs.stdout_lines"
-  with_items: vim_users
+  with_items: "{{ vim_users }}"

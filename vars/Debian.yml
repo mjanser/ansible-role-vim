@@ -1,0 +1,4 @@
+---
+vim_packages:
+  - git
+  - vim

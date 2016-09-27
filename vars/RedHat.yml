@@ -1,0 +1,5 @@
+---
+vim_packages:
+  - git
+  - ctags-etags
+  - vim-enhanced

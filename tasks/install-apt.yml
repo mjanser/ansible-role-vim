@@ -1,7 +1,0 @@
----
-- name: ensure vim is installed
-  apt: name="{{ item }}"
-  sudo: yes
-  with_items:
-    - git
-    - vim

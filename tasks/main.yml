@@ -1,8 +1,12 @@
 ---
-- include: install-dnf.yml
-  when: "ansible_os_family == 'RedHat'"
+- include_vars: "{{ item }}"
+  with_first_found:
+   - "{{ ansible_distribution }}.yml"
+   - "{{ ansible_os_family }}.yml"
 
-- include: install-apt.yml
-  when: "ansible_os_family != 'RedHat'"
+- name: ensure vim is installed
+  package:
+    name: "{{ item }}"
+  with_items: "{{ vim_packages }}"
 
 - include: config.yml
