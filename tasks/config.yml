@@ -3,6 +3,7 @@
   command: ls /home
   register: home_dirs
   changed_when: false
+  check_mode: no
 
 - name: ensure vim plugin directory exists
   file:
